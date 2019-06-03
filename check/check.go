@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -13,11 +14,14 @@ func CheckSchedule(ctx context.Context) error {
 	code := GetTeacherCode()
 	config := CreateSchedulerConfigFromEnv()
 
-	today := time.Now()
-	date := fmt.Sprintf("%d%02d%02d", today.Year(), int(today.Month()), today.Day())
-
+	//HTTP Call
 	scheduleClient := ScheduleClient{Config: config, Client: http.Client{}}
-	xmlResponse, _ := scheduleClient.RequestSchedule(date)
+	xmlResponse, httpError := scheduleClient.RequestSchedule(date)
+	if httpError != nil {
+		log.Println("could not get schedule: " + httpError.Error())
+		return httpError
+	}
+	//Response XML verarbeiten
 	var schedule Schedule
 	xml.Unmarshal(xmlResponse, &schedule)
 	scheduleChange, err := schedule.FindChange(code)
@@ -33,4 +37,26 @@ func CheckSchedule(ctx context.Context) error {
 	//Events publizieren
 
 	return nil
+}
+
+//GetFutureWeekdays creates the Date-Strings for the schedule requests.
+//Format of the Strings is YYYYDDMM. Weekends are skipped
+func GetFutureWeekdays(today time.Time, intoFuture int) []string {
+	futureWeekDays := make([]string, 0)
+	nextDate := today
+	counter := intoFuture
+	for {
+		nextDate = nextDate.AddDate(0, 0, 1)
+		if nextDate.Weekday() == time.Saturday || nextDate.Weekday() == time.Sunday {
+			continue
+		}
+		dateStr := fmt.Sprintf("%d%02d%02d", nextDate.Year(), int(nextDate.Month()), nextDate.Day())
+		futureWeekDays = append(futureWeekDays, dateStr)
+
+		counter--
+		if counter < 1 {
+			break
+		}
+	}
+	return futureWeekDays
 }
