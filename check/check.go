@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -19,19 +17,18 @@ func CheckSchedule(ctx context.Context) error {
 	date := fmt.Sprintf("%d%02d%02d", today.Year(), int(today.Month()), today.Day())
 
 	scheduleClient := ScheduleClient{Config: config, Client: http.Client{}}
-
 	xmlResponse, _ := scheduleClient.RequestSchedule(date)
+	var schedule Schedule
+	xml.Unmarshal(xmlResponse, &schedule)
+	scheduleChange, err := schedule.FindChange(code)
 
-	//TODO: Events auf Basis der Analyseergebnisse erstellen
-	var document Schedule
-	xml.Unmarshal(xmlResponse, &document)
-	log.Println("Prüfe Plan für: " + document.Head.Titel)
-	log.Println("Suche nach Kürzel: " + code)
-	if strings.Contains(document.Head.Info.ChangesTeacher, code+";") {
-		log.Println("Änderungen gefunden!")
-	} else {
-		log.Println("Keine relevanten Änderungen.")
+	if err == nil {
+		fmt.Println("No schedule changes found for teacher: " + code)
+		return nil
 	}
+
+	hash := scheduleChange.Hash()
+	fmt.Println("Found change, hashed: " + string(hash))
 	//Prüfen, ob Events bereits bekannt sind (db?)
 	//Events publizieren
 
