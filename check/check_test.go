@@ -11,17 +11,6 @@ var (
 	thursday, _ = time.Parse(time.RFC3339, "2019-06-06T22:08:41+00:00")
 )
 
-func TestGetFutureWeekdaysOneStepFriday(t *testing.T) {
-
-	weekdays := GetFutureWeekdays(friday, 1)
-	if len(weekdays) > 1 {
-		t.Errorf("expect only one result. got: %v", weekdays)
-	}
-	if weekdays[0] != "20190610" {
-		t.Errorf("expect next monday 20190610, but got: %v", weekdays[0])
-	}
-}
-
 func TestGetFutureWeekdays(t *testing.T) {
 	tables := []struct {
 		ExecutionDate  time.Time
