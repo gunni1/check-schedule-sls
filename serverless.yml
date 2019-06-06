@@ -58,7 +58,13 @@ functions:
     handler: bin/check-schedule
     events:
       - schedule: cron(0 */3 ? * MON-FRI *)
-          
+      
+#resources:
+#  Resources:
+#    NotificationsQueue:
+#      Type: "AWS::SQS::Queue"
+#      Properties:
+#        QueueName: "Notifications"
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

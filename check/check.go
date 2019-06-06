@@ -19,6 +19,7 @@ type CheckScheduleResult struct {
 func CheckSchedule(ctx context.Context) error {
 	code := GetTeacherCode()
 	config := CreateSchedulerConfigFromEnv()
+	sqsQueueURL := GetSQSQueueURL()
 
 	//TODO: Anzahl der Tage wird ebenfalls ein Env-Parameter. Für Tests erstmal fix 2
 	daysToCheck := GetFutureWeekdays(time.Now(), 2)
@@ -29,7 +30,6 @@ func CheckSchedule(ctx context.Context) error {
 	for _, day := range daysToCheck {
 		go CheckScheduleChange(config, code, day, checkResults)
 	}
-
 	changes := make([]ScheduleChange, 0)
 	for i := 0; i < len(daysToCheck); i++ {
 		checkResult := <-checkResults
@@ -39,11 +39,15 @@ func CheckSchedule(ctx context.Context) error {
 	}
 	close(checkResults)
 
+	fmt.Printf("changes: %v\n", changes)
 	//TODO: Prüfen, ob Events bereits bekannt sind (db?)
 	//hash := scheduleChange.Hash()
 	//fmt.Println("Found change, hashed: " + string(hash))
 
 	//Events publizieren
+	for _, change := range changes {
+		Signal(change, sqsQueueURL)
+	}
 
 	return nil
 }

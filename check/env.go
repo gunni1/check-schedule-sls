@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	userEnv    = "PAGE_USER"
-	pwEnv      = "PAGE_PW"
-	codeEnv    = "TEACHER_CODE"
-	baseURLEnv = "BASE_URL"
+	userEnv     = "PAGE_USER"
+	pwEnv       = "PAGE_PW"
+	codeEnv     = "TEACHER_CODE"
+	baseURLEnv  = "BASE_URL"
+	sqsQueueEnv = "SQS_QUEUE"
 )
 
 //CreateSchedulerConfigFromEnv - prepares all variables for the schedule request based on env variables
@@ -27,6 +28,11 @@ func CreateSchedulerConfigFromEnv() ScheduleClientConfig {
 //GetTeacherCode - receive the Code from the environment Variable
 func GetTeacherCode() string {
 	return parseEnvMandatory(codeEnv)
+}
+
+//GetSQSQueueURL - receive a SQS Queue URL, where the notification should be published to from env var
+func GetSQSQueueURL() string {
+	return parseEnvMandatory(sqsQueueEnv)
 }
 
 func parseEnvMandatory(variableKEy string) string {
