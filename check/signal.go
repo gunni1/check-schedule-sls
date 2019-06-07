@@ -12,7 +12,6 @@ func Signal(scheduleChange ScheduleChange, sqsQueueURL string) {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
-	fmt.Println("bla")
 	sqsClient := sqs.New(sess)
 
 	result, err := sqsClient.SendMessage(&sqs.SendMessageInput{
@@ -31,7 +30,7 @@ func Signal(scheduleChange ScheduleChange, sqsQueueURL string) {
 				StringValue: aws.String(scheduleChange.TeacherCode),
 			},
 		},
-		MessageBody: aws.String("blabla"),
+		MessageBody: aws.String("Notify Schedule Change "),
 		QueueUrl:    &sqsQueueURL,
 	})
 	if err != nil {

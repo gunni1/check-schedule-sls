@@ -58,6 +58,13 @@ functions:
     handler: bin/check-schedule
     events:
       - schedule: cron(0 */3 ? * MON-FRI *)
+  notify-telegram:
+    handler: bin/notify-telegram
+    events:
+     - sqs:
+        arn: arn:aws:sqs:eu-central-1:237990170657:NotificationsQueue
+        batchSize: 1
+      
       
 #resources:
 #  Resources:
