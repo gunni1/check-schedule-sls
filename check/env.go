@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 )
 
 const (
@@ -11,6 +12,7 @@ const (
 	codeEnv     = "TEACHER_CODE"
 	baseURLEnv  = "BASE_URL"
 	sqsQueueEnv = "SQS_QUEUE"
+	daysEnv     = "DAYS_COUNT"
 )
 
 //CreateSchedulerConfigFromEnv - prepares all variables for the schedule request based on env variables
@@ -33,6 +35,15 @@ func GetTeacherCode() string {
 //GetSQSQueueURL - receive a SQS Queue URL, where the notification should be published to from env var
 func GetSQSQueueURL() string {
 	return parseEnvMandatory(sqsQueueEnv)
+}
+
+//GetDaysCount - receive the configured count of days in the future to check. Default is 2.
+func GetDaysCount() int {
+	varValue := os.Getenv(daysEnv)
+	if days, err := strconv.Atoi(varValue); err == nil {
+		return days
+	}
+	return 2
 }
 
 func parseEnvMandatory(variableKEy string) string {

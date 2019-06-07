@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -13,6 +15,12 @@ func Signal(scheduleChange ScheduleChange, sqsQueueURL string) {
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 	sqsClient := sqs.New(sess)
+
+	changeAsJSON, marshalErr := json.Marshal(scheduleChange)
+	if marshalErr != nil {
+		log.Println("unable to json-marshal schedule change")
+		return
+	}
 
 	result, err := sqsClient.SendMessage(&sqs.SendMessageInput{
 		DelaySeconds: aws.Int64(10),
@@ -30,7 +38,7 @@ func Signal(scheduleChange ScheduleChange, sqsQueueURL string) {
 				StringValue: aws.String(scheduleChange.TeacherCode),
 			},
 		},
-		MessageBody: aws.String("Notify Schedule Change "),
+		MessageBody: aws.String(string(changeAsJSON)),
 		QueueUrl:    &sqsQueueURL,
 	})
 	if err != nil {

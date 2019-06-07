@@ -20,9 +20,10 @@ func CheckSchedule(ctx context.Context) error {
 	code := GetTeacherCode()
 	config := CreateSchedulerConfigFromEnv()
 	sqsQueueURL := GetSQSQueueURL()
+	daysCount := GetDaysCount()
 
 	//TODO: Anzahl der Tage wird ebenfalls ein Env-Parameter. Für Tests erstmal fix 2
-	daysToCheck := GetFutureWeekdays(time.Now(), 2)
+	daysToCheck := GetFutureWeekdays(time.Now(), daysCount)
 
 	checkResults := make(chan CheckScheduleResult, len(daysToCheck))
 	//TODO: Pipelines einsetzen? Methode Liefert channel mit Ergebnis zum weiterarbeiten.
@@ -44,8 +45,8 @@ func CheckSchedule(ctx context.Context) error {
 	//hash := scheduleChange.Hash()
 	//fmt.Println("Found change, hashed: " + string(hash))
 
-	//Events publizieren
 	for _, change := range changes {
+		//TODO: Invocation dont work as goroutine, find out why
 		Signal(change, sqsQueueURL)
 	}
 

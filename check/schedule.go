@@ -27,9 +27,9 @@ type Info struct {
 
 //ScheduleChange is a summary of data about a change in the schedule
 type ScheduleChange struct {
-	DateConcerned string
-	IssueDate     string
-	TeacherCode   string
+	DateConcerned string `json:"dateConcerned"`
+	IssueDate     string `json:"issueDate"`
+	TeacherCode   string `json:"teacherCode"`
 }
 
 //FindChange checks the XML-Document for relevant schedule changes
