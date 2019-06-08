@@ -2,7 +2,6 @@
 
 build:
 	env GOOS=linux go build -ldflags="-s -w" -o bin/check-schedule check/*
-	env GOOS=linux go build -ldflags="-s -w" -o bin/notify-telegram notify/*
 
 test:
 	go test ./...

@@ -19,8 +19,10 @@ type CheckScheduleResult struct {
 func CheckSchedule(ctx context.Context) error {
 	code := GetTeacherCode()
 	config := CreateSchedulerConfigFromEnv()
-	sqsQueueURL := GetSQSQueueURL()
 	daysCount := GetDaysCount()
+
+	notificator := CreateTelegramNotificator(GetBotToken(),GetNotificationTarget())
+
 
 	//TODO: Anzahl der Tage wird ebenfalls ein Env-Parameter. Für Tests erstmal fix 2
 	daysToCheck := GetFutureWeekdays(time.Now(), daysCount)
@@ -46,8 +48,7 @@ func CheckSchedule(ctx context.Context) error {
 	//fmt.Println("Found change, hashed: " + string(hash))
 
 	for _, change := range changes {
-		//TODO: Invocation dont work as goroutine, find out why
-		Signal(change, sqsQueueURL)
+		go notificator.SendNotification(change)
 	}
 
 	return nil

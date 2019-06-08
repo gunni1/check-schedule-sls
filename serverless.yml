@@ -66,16 +66,6 @@ functions:
     #   SQS_QUEUE:
     #   DAYS_COUNT:
 
-  notify-telegram:
-    handler: bin/notify-telegram
-    events:
-     - sqs:
-        arn: arn:aws:sqs:eu-central-1:237990170657:NotificationsQueue
-        batchSize: 1
-    # environment: 
-    #   BOT_TOKEN:
-    #   NOTIFICATION_TARGET:
-      
       
 #resources:
 #  Resources:

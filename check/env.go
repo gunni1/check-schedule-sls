@@ -7,12 +7,13 @@ import (
 )
 
 const (
-	userEnv     = "PAGE_USER"
-	pwEnv       = "PAGE_PW"
-	codeEnv     = "TEACHER_CODE"
-	baseURLEnv  = "BASE_URL"
-	sqsQueueEnv = "SQS_QUEUE"
-	daysEnv     = "DAYS_COUNT"
+	userEnv               = "PAGE_USER"
+	pwEnv                 = "PAGE_PW"
+	codeEnv               = "TEACHER_CODE"
+	baseURLEnv            = "BASE_URL"
+	daysEnv               = "DAYS_COUNT"
+	botAPITokenEnv        = "BOT_TOKEN"
+	notificationTargetEnv = "NOTIFICATION_TARGET"
 )
 
 //CreateSchedulerConfigFromEnv - prepares all variables for the schedule request based on env variables
@@ -32,11 +33,6 @@ func GetTeacherCode() string {
 	return parseEnvMandatory(codeEnv)
 }
 
-//GetSQSQueueURL - receive a SQS Queue URL, where the notification should be published to from env var
-func GetSQSQueueURL() string {
-	return parseEnvMandatory(sqsQueueEnv)
-}
-
 //GetDaysCount - receive the configured count of days in the future to check. Default is 2.
 func GetDaysCount() int {
 	varValue := os.Getenv(daysEnv)
@@ -44,6 +40,21 @@ func GetDaysCount() int {
 		return days
 	}
 	return 2
+}
+
+//GetNotificationTarget - parses the chatId of the telegram notification target. Its mandatory
+func GetNotificationTarget() int64 {
+	varValue := parseEnvMandatory(notificationTargetEnv)
+	intValue, err := strconv.ParseInt(varValue, 10, 64)
+	if err != nil {
+		log.Fatalln("Error: " + err.Error())
+	}
+	return intValue
+}
+
+//GetBotToken - parses the Bot API Token from the environment variables
+func GetBotToken() string {
+	return parseEnvMandatory(botAPITokenEnv)
 }
 
 func parseEnvMandatory(variableKEy string) string {
