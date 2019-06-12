@@ -35,9 +35,8 @@ func (client ScheduleClient) RequestSchedule(date string) ([]byte, error) {
 	data, parseBodyErr := ioutil.ReadAll(resp.Body)
 	if parseBodyErr == nil {
 		return data, nil
-	} else {
-		return nil, errors.New("Parse Response Body Error: " + parseBodyErr.Error())
-	}
+	} 
+	return nil, errors.New("Parse Response Body Error: " + parseBodyErr.Error())
 }
 
 func encodeAsBasicAuth(user string, password string) string {

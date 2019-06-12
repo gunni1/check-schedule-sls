@@ -57,7 +57,7 @@ functions:
   check-schedule:
     handler: bin/check-schedule
     events:
-      - schedule: cron(0 9,12,15 ? * MON-FRI *)
+      - schedule: cron(0 9,15 ? * MON-FRI *)
     # environment:
     #   PAGE_USER: 
     #   PAGE_PW:

@@ -21,8 +21,7 @@ func CheckSchedule(ctx context.Context) error {
 	config := CreateSchedulerConfigFromEnv()
 	daysCount := GetDaysCount()
 
-	notificator := CreateTelegramNotificator(GetBotToken(),GetNotificationTarget())
-
+	notificator := CreateTelegramNotificator(GetBotToken(), GetNotificationTarget())
 
 	//TODO: Anzahl der Tage wird ebenfalls ein Env-Parameter. Für Tests erstmal fix 2
 	daysToCheck := GetFutureWeekdays(time.Now(), daysCount)
